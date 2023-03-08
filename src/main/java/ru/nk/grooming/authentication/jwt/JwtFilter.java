@@ -10,6 +10,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
+import ru.nk.grooming.authentication.routes.components.UserDetailsService;
 import ru.nk.grooming.users.User;
 import ru.nk.grooming.users.UserService;
 
@@ -19,7 +20,7 @@ import java.io.IOException;
 @RequiredArgsConstructor
 public class JwtFilter extends OncePerRequestFilter {
     private final JwtService jwtService;
-    private final UserService userService;
+    private final UserDetailsService userDetailsService;
     @Override
     protected void doFilterInternal(
             HttpServletRequest request,
@@ -36,7 +37,7 @@ public class JwtFilter extends OncePerRequestFilter {
                 userEmail != null &&
                 SecurityContextHolder.getContext().getAuthentication() == null
             ) {
-                User user = userService.loadUserByUsername(userEmail);
+                User user = userDetailsService.loadUserByUsername(userEmail);
 
                 if (jwtService.isValid(jwt, user)) {
                     UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
