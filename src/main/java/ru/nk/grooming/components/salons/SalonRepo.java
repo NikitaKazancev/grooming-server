@@ -1,7 +1,6 @@
-package ru.nk.grooming.salons;
+package ru.nk.grooming.components.salons;
 
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.Optional;

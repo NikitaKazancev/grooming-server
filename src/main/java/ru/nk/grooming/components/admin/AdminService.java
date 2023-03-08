@@ -1,4 +1,4 @@
-package ru.nk.grooming.admin;
+package ru.nk.grooming.components.admin;
 
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;

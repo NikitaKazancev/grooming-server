@@ -1,11 +1,11 @@
-package ru.nk.grooming.salons;
+package ru.nk.grooming.components.salons;
 
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import ru.nk.grooming.salons.dto.SalonResponse;
+import ru.nk.grooming.components.salons.dto.SalonResponse;
 import ru.nk.grooming.types.StatusCode;
 
 @RestController

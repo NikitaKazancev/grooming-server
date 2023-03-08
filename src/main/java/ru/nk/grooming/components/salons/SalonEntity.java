@@ -1,4 +1,4 @@
-package ru.nk.grooming.salons;
+package ru.nk.grooming.components.salons;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
