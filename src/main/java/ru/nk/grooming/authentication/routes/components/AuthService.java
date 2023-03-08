@@ -1,5 +1,6 @@
 package ru.nk.grooming.authentication.routes.components;
 
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.AllArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -22,6 +23,18 @@ public class AuthService {
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
     private final AuthenticationManager authManager;
+
+    public User getUserByHttpRequest(HttpServletRequest request) {
+        String authHeader = request.getHeader("Authorization");
+
+        if (authHeader != null && authHeader.startsWith("Bearer ")) {
+            return userRepo
+                    .findByEmail(jwtService.getEmail(authHeader.substring(7)))
+                    .orElse(null);
+        }
+
+        return null;
+    }
 
     public AuthResponseDTO register(RegisterRequestDTO requestData) {
         return register(requestData, Role.USER);
