@@ -8,7 +8,7 @@ import ru.nk.grooming.components.products.dto.ProductResponse;
 import ru.nk.grooming.types.StatusCode;
 
 @RestController
-@RequestMapping("/products")
+@RequestMapping("/api/v1/products")
 @RequiredArgsConstructor
 public class ProductController {
     private final ProductService productService;

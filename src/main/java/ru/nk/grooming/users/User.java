@@ -9,7 +9,9 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.lang.reflect.Field;
 import java.util.Collection;
+import java.util.Date;
 import java.util.List;
 
 @Data
@@ -27,9 +29,39 @@ public class User implements UserDetails {
     private String lastname;
     private String email;
     private String password;
+    private String phone;
+    private Date birthday;
+    private String dogBreed;
 
     @Enumerated(EnumType.STRING)
     private Role role;
+
+    public void mergeUser(User inputUser) {
+        String field = inputUser.getFirstname();
+        if (field != null) {
+            this.setFirstname(field);
+        }
+
+        field = inputUser.getLastname();
+        if (field != null) {
+            this.setLastname(field);
+        }
+
+        field = inputUser.getPhone();
+        if (field != null) {
+            this.setPassword(field);
+        }
+
+        field = inputUser.getDogBreed();
+        if (field != null) {
+            this.setDogBreed(field);
+        }
+
+        Date birthday = inputUser.getBirthday();
+        if (birthday != null) {
+            this.setBirthday(birthday);
+        }
+    }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

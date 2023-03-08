@@ -12,6 +12,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import ru.nk.grooming.authentication.jwt.JwtFilter;
+import ru.nk.grooming.authentication.routes.components.UserDetailsService;
 import ru.nk.grooming.users.UserService;
 
 @EnableWebSecurity
@@ -21,12 +22,12 @@ public class SecurityConfig {
 
     public SecurityConfig(
             JwtFilter jwtFilter,
-            UserService userService
+            UserDetailsService userDetailsService
     ) {
         this.jwtFilter = jwtFilter;
 
         this.authenticationProvider = new DaoAuthenticationProvider();
-        this.authenticationProvider.setUserDetailsService(userService);
+        this.authenticationProvider.setUserDetailsService(userDetailsService);
         this.authenticationProvider.setPasswordEncoder(passwordEncoder());
     }
 
