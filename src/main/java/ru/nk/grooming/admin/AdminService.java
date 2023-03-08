@@ -4,6 +4,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.nk.grooming.authentication.jwt.JwtService;
+import ru.nk.grooming.authentication.routes.components.AuthService;
 import ru.nk.grooming.users.Role;
 import ru.nk.grooming.users.User;
 import ru.nk.grooming.users.UserRepo;
@@ -11,15 +12,11 @@ import ru.nk.grooming.users.UserRepo;
 @Service
 @RequiredArgsConstructor
 public class AdminService {
-    private final UserRepo userRepo;
-    private final JwtService jwtService;
+    private final AuthService authService;
     public int home(HttpServletRequest request) {
-        String jwt = request.getHeader("Authorization").substring(7);
-        User user = userRepo
-                .findByEmail(jwtService.getEmail(jwt))
-                .orElseThrow();
+        User user = authService.getUserByHttpRequest(request);
 
-        if (user.getRole() == Role.ADMIN) {
+        if (user != null && user.getRole() == Role.ADMIN) {
             return 200;
         }
 

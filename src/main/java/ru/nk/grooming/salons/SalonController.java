@@ -1,5 +1,7 @@
 package ru.nk.grooming.salons;
 
+import jakarta.servlet.http.HttpServletRequest;
+import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -13,9 +15,10 @@ public class SalonController {
     private final SalonService salonService;
     @PostMapping
     public ResponseEntity<StatusCode> save(
-            @RequestBody SalonEntity salonData
+            @RequestBody SalonEntity salonData,
+            @NonNull HttpServletRequest request
     ) {
-        StatusCode statusCode = salonService.save(salonData);
+        StatusCode statusCode = salonService.save(salonData, request);
         return ResponseEntity.status(statusCode.getStatusCode()).body(statusCode);
     }
 

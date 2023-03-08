@@ -1,9 +1,13 @@
 package ru.nk.grooming.salons;
 
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import ru.nk.grooming.authentication.routes.components.AuthService;
 import ru.nk.grooming.salons.dto.SalonResponse;
 import ru.nk.grooming.types.StatusCode;
+import ru.nk.grooming.users.Role;
+import ru.nk.grooming.users.User;
 
 import java.util.List;
 import java.util.Optional;
@@ -12,8 +16,15 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class SalonService {
     private final SalonRepo salonRepo;
+    private final AuthService authService;
 
-    public StatusCode save(SalonEntity salonData) {
+    public StatusCode save(SalonEntity salonData, HttpServletRequest request) {
+        User user = authService.getUserByHttpRequest(request);
+
+        if (user.getRole() != Role.ADMIN) {
+            return new StatusCode(403);
+        }
+
         SalonEntity salon = findByAddress(salonData.getAddress());
         if (salon != null) {
             return new StatusCode(409);
