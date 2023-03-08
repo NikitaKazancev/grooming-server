@@ -14,12 +14,10 @@ import ru.nk.grooming.users.UserRepo;
 public class AdminService {
     private final AuthService authService;
     public int home(HttpServletRequest request) {
-        User user = authService.getUserByHttpRequest(request);
-
-        if (user != null && user.getRole() == Role.ADMIN) {
-            return 200;
+        if (authService.isNotAdmin(request)) {
+            return 403;
         }
 
-        return 403;
+        return 200;
     }
 }
