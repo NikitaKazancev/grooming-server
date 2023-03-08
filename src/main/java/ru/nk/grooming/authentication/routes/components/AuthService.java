@@ -36,6 +36,11 @@ public class AuthService {
         return null;
     }
 
+    public boolean isNotAdmin(HttpServletRequest request) {
+        User user = getUserByHttpRequest(request);
+        return user == null || user.getRole() != Role.ADMIN;
+    }
+
     public AuthResponseDTO register(RegisterRequestDTO requestData) {
         return register(requestData, Role.USER);
     }

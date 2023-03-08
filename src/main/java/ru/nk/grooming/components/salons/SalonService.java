@@ -18,9 +18,7 @@ public class SalonService {
     private final AuthService authService;
 
     public StatusCode save(SalonEntity salonData, HttpServletRequest request) {
-        User user = authService.getUserByHttpRequest(request);
-
-        if (user.getRole() != Role.ADMIN) {
+        if (authService.isNotAdmin(request)) {
             return new StatusCode(403);
         }
 
