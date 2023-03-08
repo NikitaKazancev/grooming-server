@@ -1,7 +1,6 @@
 package ru.nk.grooming.configuration;
 
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
@@ -11,14 +10,23 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import ru.nk.grooming.authentication.jwt.JwtFilter;
+import ru.nk.grooming.users.UserService;
 
-@Configuration
 @EnableWebSecurity
 public class SecurityConfig {
     private final DaoAuthenticationProvider authenticationProvider;
+    private final JwtFilter jwtFilter;
 
-    public SecurityConfig() {
+    public SecurityConfig(
+            JwtFilter jwtFilter,
+            UserService userService
+    ) {
+        this.jwtFilter = jwtFilter;
+
         this.authenticationProvider = new DaoAuthenticationProvider();
+        this.authenticationProvider.setUserDetailsService(userService);
         this.authenticationProvider.setPasswordEncoder(passwordEncoder());
     }
 
@@ -33,13 +41,14 @@ public class SecurityConfig {
                 .sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
-                .authenticationProvider(authenticationProvider);
+                .authenticationProvider(authenticationProvider)
+                .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
 
     @Bean
-    public PasswordEncoder passwordEncoder() {
+    private PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
