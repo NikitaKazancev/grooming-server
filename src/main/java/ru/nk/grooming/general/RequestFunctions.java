@@ -4,10 +4,8 @@ import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.nk.grooming.authentication.routes.components.AuthService;
-import ru.nk.grooming.components.positions.PositionEntity;
 import ru.nk.grooming.types.ResponseWithStatus;
 import ru.nk.grooming.types.StatusCode;
-import ru.nk.grooming.users.User;
 
 import java.util.Optional;
 import java.util.function.Function;
@@ -24,13 +22,13 @@ public class RequestFunctions {
         ObjectType object = findFunction.apply(property).orElse(null);
         if (object == null) {
             return ResponseWithStatus.<ObjectType>builder()
-                    .statusCode(404)
+                    .status(404)
                     .data(null)
                     .build();
         }
 
         return ResponseWithStatus.<ObjectType>builder()
-                .statusCode(200)
+                .status(200)
                 .data(object)
                 .build();
     }
@@ -42,12 +40,33 @@ public class RequestFunctions {
     ) {
         if (authService.isNotAdmin(request)) {
             return ResponseWithStatus.<ObjectType>builder()
-                    .statusCode(403)
+                    .status(403)
                     .data(null)
                     .build();
         }
 
         return findBy(property, findFunction);
+    }
+    public <ObjectType> Iterable<ObjectType> findAllWithAuth(
+            FindAll<ObjectType> findAll,
+            HttpServletRequest request
+    ) {
+        if (authService.isNotAdmin(request)) {
+            return null;
+        }
+
+        return findAll.apply();
+    }
+    public <ObjectType, PropType> Iterable<ObjectType> findAllByWithAuth(
+            PropType property,
+            Function<PropType, Iterable<ObjectType>> findAllBy,
+            HttpServletRequest request
+    ) {
+        if (authService.isNotAdmin(request)) {
+            return null;
+        }
+
+        return findAllBy.apply(property);
     }
 
     public <ObjectType, PropType> StatusCode save(
@@ -61,7 +80,7 @@ public class RequestFunctions {
             return StatusCode.create(403);
         }
 
-        if (findBy(property, findFunction) == null) {
+        if (findBy(property, findFunction).getStatus() == 404) {
             saveFunction.apply(object);
             return StatusCode.create(200);
         }

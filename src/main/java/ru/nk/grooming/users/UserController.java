@@ -20,7 +20,7 @@ public class UserController {
             @NonNull HttpServletRequest request
     ) {
         StatusCode response = userService.change(user, request);
-        return ResponseEntity.status(response.getStatusCode()).body(response);
+        return ResponseEntity.status(response.getStatus()).body(response);
     }
 
     @GetMapping("/{id}")
@@ -29,7 +29,7 @@ public class UserController {
             @NonNull HttpServletRequest request
     ) {
         ResponseWithStatus<User> response = userService.findById(id, request);
-        return ResponseEntity.status(response.getStatusCode()).body(response);
+        return ResponseEntity.status(response.getStatus()).body(response);
     }
 
     @GetMapping(params = "email")
@@ -38,7 +38,7 @@ public class UserController {
             @NonNull HttpServletRequest request
     ) {
         ResponseWithStatus<User> response = userService.findByEmail(email, request);
-        return ResponseEntity.status(response.getStatusCode()).body(response);
+        return ResponseEntity.status(response.getStatus()).body(response);
     }
 
     @GetMapping
