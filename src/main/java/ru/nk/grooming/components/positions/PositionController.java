@@ -27,7 +27,7 @@ public class PositionController {
             @NonNull HttpServletRequest request
     ) {
         ResponseWithStatus<PositionEntity> response = positionService.findById(id, request);
-        return ResponseEntity.status(response.getStatusCode()).body(response);
+        return ResponseEntity.status(response.getStatus()).body(response);
     }
 
     @PostMapping
@@ -36,6 +36,6 @@ public class PositionController {
             @NonNull HttpServletRequest request
     ) {
         StatusCode response = positionService.save(position, request);
-        return ResponseEntity.status(response.getStatusCode()).body(response);
+        return ResponseEntity.status(response.getStatus()).body(response);
     }
 }

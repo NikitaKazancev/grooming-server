@@ -19,7 +19,7 @@ public class SalonController {
             @NonNull HttpServletRequest request
     ) {
         StatusCode statusCode = salonService.save(salonData, request);
-        return ResponseEntity.status(statusCode.getStatusCode()).body(statusCode);
+        return ResponseEntity.status(statusCode.getStatus()).body(statusCode);
     }
 
     @GetMapping("/{id}")
@@ -27,7 +27,7 @@ public class SalonController {
             @PathVariable Long id
     ) {
         ResponseWithStatus<SalonEntity> response = salonService.findById(id);
-        return ResponseEntity.status(response.getStatusCode()).body(response);
+        return ResponseEntity.status(response.getStatus()).body(response);
     }
 
     @GetMapping

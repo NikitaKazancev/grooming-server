@@ -21,7 +21,7 @@ public class ProductController {
     @GetMapping("/{id}")
     public ResponseEntity<ResponseWithStatus<ProductEntity>> findById(@PathVariable Long id) {
         ResponseWithStatus<ProductEntity> response = productService.findById(id);
-        return ResponseEntity.status(response.getStatusCode()).body(response);
+        return ResponseEntity.status(response.getStatus()).body(response);
     }
 
     @PostMapping
@@ -30,6 +30,6 @@ public class ProductController {
             HttpServletRequest request
     ) {
         StatusCode statusCode = productService.save(product, request);
-        return ResponseEntity.status(statusCode.getStatusCode()).body(statusCode);
+        return ResponseEntity.status(statusCode.getStatus()).body(statusCode);
     }
 }

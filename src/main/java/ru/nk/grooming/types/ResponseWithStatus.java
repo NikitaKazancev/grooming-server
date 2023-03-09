@@ -1,7 +1,6 @@
 package ru.nk.grooming.types;
 
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -9,7 +8,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ResponseWithStatus <T> {
-    private int statusCode;
+    private int status;
     private T data;
 
     public static <DataType> Builder<DataType> builder() {
@@ -19,7 +18,7 @@ public class ResponseWithStatus <T> {
     public static class Builder <T> {
         private int statusCode;
         private T data;
-        public Builder<T> statusCode(int statusCode) {
+        public Builder<T> status(int statusCode) {
             this.statusCode = statusCode;
             return this;
         }

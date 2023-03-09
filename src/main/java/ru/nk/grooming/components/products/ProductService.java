@@ -3,12 +3,9 @@ package ru.nk.grooming.components.products;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import ru.nk.grooming.authentication.routes.components.AuthService;
 import ru.nk.grooming.general.RequestFunctions;
 import ru.nk.grooming.types.ResponseWithStatus;
 import ru.nk.grooming.types.StatusCode;
-
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor

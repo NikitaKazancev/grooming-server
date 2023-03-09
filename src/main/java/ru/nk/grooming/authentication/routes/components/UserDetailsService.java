@@ -1,7 +1,6 @@
 package ru.nk.grooming.authentication.routes.components;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import ru.nk.grooming.users.User;

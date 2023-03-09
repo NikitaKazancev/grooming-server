@@ -12,7 +12,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 import ru.nk.grooming.authentication.routes.components.UserDetailsService;
 import ru.nk.grooming.users.User;
-import ru.nk.grooming.users.UserService;
 
 import java.io.IOException;
 
