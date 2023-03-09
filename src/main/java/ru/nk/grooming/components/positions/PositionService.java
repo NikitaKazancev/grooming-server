@@ -23,6 +23,13 @@ public class PositionService {
         return positionRepo.findAll();
     }
 
+    public ResponseWithStatus<PositionEntity> findById(
+            Long id,
+            HttpServletRequest request
+    ) {
+        return requestFunctions.findByWithAuth(id, positionRepo::findById, request);
+    }
+
     public StatusCode save(
             PositionEntity position,
             HttpServletRequest request

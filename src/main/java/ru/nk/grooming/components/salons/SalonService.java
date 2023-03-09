@@ -16,7 +16,6 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class SalonService {
     private final SalonRepo salonRepo;
-    private final AuthService authService;
     private final RequestFunctions requestFunctions;
 
     public StatusCode save(SalonEntity salonData, HttpServletRequest request) {

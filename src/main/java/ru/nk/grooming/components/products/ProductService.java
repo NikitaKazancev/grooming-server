@@ -14,7 +14,6 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class ProductService {
     private final ProductRepo productRepo;
-    private final AuthService authService;
     private final RequestFunctions requestFunctions;
 
     public StatusCode save(ProductEntity product, HttpServletRequest request) {
