@@ -5,8 +5,8 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import ru.nk.grooming.types.ResponseWithStatus;
 import ru.nk.grooming.types.StatusCode;
-import ru.nk.grooming.users.dto.UserResponse;
 
 @RestController
 @RequestMapping("/api/v1/users")
@@ -24,20 +24,20 @@ public class UserController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<UserResponse> findById(
+    public ResponseEntity<ResponseWithStatus<User>> findById(
             @PathVariable Long id,
             @NonNull HttpServletRequest request
     ) {
-        UserResponse response = userService.findById(id, request);
+        ResponseWithStatus<User> response = userService.findById(id, request);
         return ResponseEntity.status(response.getStatusCode()).body(response);
     }
 
     @GetMapping(params = "email")
-    public ResponseEntity<UserResponse> findByEmail(
+    public ResponseEntity<ResponseWithStatus<User>> findByEmail(
             @RequestParam String email,
             @NonNull HttpServletRequest request
     ) {
-        UserResponse response = userService.findByEmail(email, request);
+        ResponseWithStatus<User> response = userService.findByEmail(email, request);
         return ResponseEntity.status(response.getStatusCode()).body(response);
     }
 

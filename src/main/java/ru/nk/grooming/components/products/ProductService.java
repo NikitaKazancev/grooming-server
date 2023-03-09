@@ -4,7 +4,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.nk.grooming.authentication.routes.components.AuthService;
-import ru.nk.grooming.components.products.dto.ProductResponse;
+import ru.nk.grooming.types.ResponseWithStatus;
 import ru.nk.grooming.types.StatusCode;
 
 import java.util.Optional;
@@ -33,16 +33,16 @@ public class ProductService {
         return productRepo.findByName(name).orElse(null);
     }
 
-    public ProductResponse findById(Long id) {
+    public ResponseWithStatus<ProductEntity> findById(Long id) {
         Optional<ProductEntity> product = productRepo.findById(id);
         if (product.isPresent()) {
-            return ProductResponse.builder()
+            return ResponseWithStatus.<ProductEntity>builder()
                     .data(product.get())
                     .statusCode(200)
                     .build();
         }
 
-        return ProductResponse.builder()
+        return ResponseWithStatus.<ProductEntity>builder()
                 .data(null)
                 .statusCode(404)
                 .build();

@@ -4,7 +4,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.nk.grooming.authentication.routes.components.AuthService;
-import ru.nk.grooming.components.salons.dto.SalonResponse;
+import ru.nk.grooming.types.ResponseWithStatus;
 import ru.nk.grooming.types.StatusCode;
 import ru.nk.grooming.users.Role;
 import ru.nk.grooming.users.User;
@@ -31,16 +31,16 @@ public class SalonService {
         return new StatusCode(200);
     }
 
-    public SalonResponse findById(Long id) {
+    public ResponseWithStatus<SalonEntity> findById(Long id) {
         Optional<SalonEntity> salon = salonRepo.findById(id);
         if (salon.isPresent()) {
-            return SalonResponse.builder()
+            return ResponseWithStatus.<SalonEntity>builder()
                     .data(salon.get())
                     .statusCode(200)
                     .build();
         }
 
-        return SalonResponse.builder()
+        return ResponseWithStatus.<SalonEntity>builder()
                 .statusCode(404)
                 .data(null)
                 .build();
