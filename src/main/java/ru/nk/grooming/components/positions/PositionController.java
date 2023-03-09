@@ -9,7 +9,7 @@ import ru.nk.grooming.types.ResponseWithStatus;
 import ru.nk.grooming.types.StatusCode;
 
 @RestController
-@RequestMapping("/positions")
+@RequestMapping("/api/v1/positions")
 @RequiredArgsConstructor
 public class PositionController {
     private final PositionService positionService;

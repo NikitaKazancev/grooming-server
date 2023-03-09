@@ -80,7 +80,7 @@ public class RequestFunctions {
             return StatusCode.create(403);
         }
 
-        if (findBy(property, findFunction) == null) {
+        if (findBy(property, findFunction).getStatus() == 404) {
             saveFunction.apply(object);
             return StatusCode.create(200);
         }

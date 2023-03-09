@@ -11,6 +11,14 @@ public class ResponseWithStatus <T> {
     private int status;
     private T data;
 
+    public static <T> ResponseWithStatus<T> empty(int statusCode) {
+        return new ResponseWithStatus<>(statusCode, null);
+    }
+
+    public static <T> ResponseWithStatus<T> create(int statusCode, T data) {
+        return new ResponseWithStatus<>(statusCode, data);
+    }
+
     public static <DataType> Builder<DataType> builder() {
         return new Builder<>();
     }
