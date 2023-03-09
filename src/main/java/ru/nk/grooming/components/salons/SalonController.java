@@ -5,7 +5,7 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import ru.nk.grooming.components.salons.dto.SalonResponse;
+import ru.nk.grooming.types.ResponseWithStatus;
 import ru.nk.grooming.types.StatusCode;
 
 @RestController
@@ -23,10 +23,10 @@ public class SalonController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<SalonResponse> findById(
+    public ResponseEntity<ResponseWithStatus<SalonEntity>> findById(
             @PathVariable Long id
     ) {
-        SalonResponse response = salonService.findById(id);
+        ResponseWithStatus<SalonEntity> response = salonService.findById(id);
         return ResponseEntity.status(response.getStatusCode()).body(response);
     }
 
