@@ -47,6 +47,27 @@ public class RequestFunctions {
 
         return findBy(property, findFunction);
     }
+    public <ObjectType> Iterable<ObjectType> findAllWithAuth(
+            FindAll<ObjectType> findAll,
+            HttpServletRequest request
+    ) {
+        if (authService.isNotAdmin(request)) {
+            return null;
+        }
+
+        return findAll.apply();
+    }
+    public <ObjectType, PropType> Iterable<ObjectType> findAllByWithAuth(
+            PropType property,
+            Function<PropType, Iterable<ObjectType>> findAllBy,
+            HttpServletRequest request
+    ) {
+        if (authService.isNotAdmin(request)) {
+            return null;
+        }
+
+        return findAllBy.apply(property);
+    }
 
     public <ObjectType, PropType> StatusCode save(
             ObjectType object,

@@ -36,10 +36,6 @@ public class UserService {
     }
 
     public Iterable<User> findAll(HttpServletRequest request) {
-        if (authService.isNotAdmin(request)) {
-            return null;
-        }
-
-        return userRepo.findAll();
+        return requestFunctions.findAllWithAuth(userRepo::findAll, request);
     }
 }
