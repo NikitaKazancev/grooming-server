@@ -3,18 +3,26 @@ package ru.nk.grooming.components.products;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import ru.nk.grooming.general.RequestFunctions;
+import ru.nk.grooming.general.ServiceFunctions;
 import ru.nk.grooming.types.ResponseWithStatus;
 import ru.nk.grooming.types.StatusCode;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
 public class ProductService {
     private final ProductRepo productRepo;
-    private final RequestFunctions requestFunctions;
+    private final ServiceFunctions functions;
 
+    public List<ProductEntity> findAll() {
+        return productRepo.findAll();
+    }
+    public ResponseWithStatus<ProductEntity> findById(Long id) {
+        return functions.findBy(id, productRepo::findById);
+    }
     public StatusCode save(ProductEntity product, HttpServletRequest request) {
-        return requestFunctions.save(
+        return functions.saveWithAuth(
                 product,
                 product.getName(),
                 productRepo::findByName,
@@ -22,12 +30,13 @@ public class ProductService {
                 request
         );
     }
-
-    public ResponseWithStatus<ProductEntity> findById(Long id) {
-        return requestFunctions.findBy(id, productRepo::findById);
-    }
-
-    public Iterable<ProductEntity> findAll() {
-        return productRepo.findAll();
+    public StatusCode change(ProductEntity product, HttpServletRequest request) {
+        return functions.changeWithAuth(
+                product,
+                productRepo::findByName,
+                product.getName(),
+                productRepo::save,
+                request
+        );
     }
 }

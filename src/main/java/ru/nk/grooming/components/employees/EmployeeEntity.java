@@ -5,6 +5,9 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import ru.nk.grooming.types.EntityWithMerge;
+
+import java.util.Date;
 
 @Entity
 @Table(name = "employees")
@@ -12,7 +15,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class EmployeeEntity {
+public class EmployeeEntity implements EntityWithMerge<EmployeeEntity> {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -23,4 +26,27 @@ public class EmployeeEntity {
     private Long positionId;
     @Column(name = "salon_id")
     private Long salonId;
+
+    @Override
+    public void merge(EmployeeEntity inputEmployee) {
+        String field = inputEmployee.getPhone();
+        if (field != null) {
+            this.setPhone(field);
+        }
+
+        field = inputEmployee.getAddress();
+        if (field != null) {
+            this.setAddress(field);
+        }
+
+        Long id = inputEmployee.getPositionId();
+        if (id != null) {
+            this.setPositionId(id);
+        }
+
+        id = inputEmployee.getSalonId();
+        if (id != null) {
+            this.setSalonId(id);
+        }
+    }
 }
