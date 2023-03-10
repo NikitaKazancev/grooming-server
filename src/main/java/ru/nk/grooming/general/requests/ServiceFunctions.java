@@ -1,4 +1,4 @@
-package ru.nk.grooming.general;
+package ru.nk.grooming.general.requests;
 
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import ru.nk.grooming.authentication.routes.components.AuthService;
 import ru.nk.grooming.types.EntityWithMerge;
 import ru.nk.grooming.types.functions.FindAll;
+import ru.nk.grooming.types.functions.Func2Args;
 import ru.nk.grooming.types.functions.VoidReturnFunc;
 import ru.nk.grooming.types.ResponseWithStatus;
 import ru.nk.grooming.types.StatusCode;
@@ -105,7 +106,7 @@ public class ServiceFunctions {
             return StatusCode.create(403);
         }
 
-        if (findBy(property, findFunction).getStatus() == 404) {
+        if (findFunction.apply(property).orElse(null) == null) {
             saveFunction.apply(object);
             return StatusCode.create(200);
         }
@@ -128,7 +129,31 @@ public class ServiceFunctions {
             return StatusCode.create(404);
         }
 
-        if (findBy(property, findFunction).getStatus() == 404) {
+        if (findFunction.apply(property).orElse(null) == null) {
+            saveFunction.apply(object);
+            return StatusCode.create(200);
+        }
+
+        return StatusCode.create(409);
+    }
+    public <ObjectType, Prop1Type, Prop2Type> StatusCode saveWithCheckFieldsWithAuth(
+            ObjectType object,
+            Function<ObjectType, Boolean> fieldsNotExist,
+            Prop1Type property1,
+            Prop2Type property2,
+            Func2Args<Prop1Type, Prop2Type, Optional<ObjectType>> findFunction,
+            Function<ObjectType, ObjectType> saveFunction,
+            HttpServletRequest request
+    ) {
+        if (isNotAdmin(request)) {
+            return StatusCode.create(403);
+        }
+
+        if (fieldsNotExist.apply(object)) {
+            return StatusCode.create(404);
+        }
+
+        if (findFunction.apply(property1, property2).orElse(null) == null) {
             saveFunction.apply(object);
             return StatusCode.create(200);
         }

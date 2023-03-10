@@ -3,13 +3,12 @@ package ru.nk.grooming.components.employees;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import ru.nk.grooming.authentication.routes.components.AuthService;
 import ru.nk.grooming.components.employees.dto.EmployeeFullData;
 import ru.nk.grooming.components.positions.PositionEntity;
 import ru.nk.grooming.components.positions.PositionRepo;
 import ru.nk.grooming.components.salons.SalonEntity;
 import ru.nk.grooming.components.salons.SalonRepo;
-import ru.nk.grooming.general.ServiceFunctions;
+import ru.nk.grooming.general.requests.ServiceFunctions;
 import ru.nk.grooming.types.ResponseWithStatus;
 import ru.nk.grooming.types.StatusCode;
 
@@ -20,11 +19,10 @@ import java.util.List;
 public class EmployeeService {
     private final EmployeeRepo employeeRepo;
     private final ServiceFunctions functions;
-    private final AuthService authService;
     private final PositionRepo positionRepo;
     private final SalonRepo salonRepo;
 
-    private EmployeeFullData employeeFullData(List<Object[]> entitiesArr) {
+    private EmployeeFullData fullData(List<Object[]> entitiesArr) {
         Object[] entities = entitiesArr.get(0);
         EmployeeEntity employee = (EmployeeEntity) entities[0];
         SalonEntity salon = (SalonEntity) entities[1];
@@ -65,7 +63,7 @@ public class EmployeeService {
         return functions.findByWithJoinWithAuth(
                 id,
                 employeeRepo::findByIdWithJoin,
-                this::employeeFullData,
+                this::fullData,
                 request
         );
     }
@@ -76,7 +74,7 @@ public class EmployeeService {
         return functions.findByWithJoinWithAuth(
                 name,
                 employeeRepo::findByNameWithJoin,
-                this::employeeFullData,
+                this::fullData,
                 request
         );
     }
