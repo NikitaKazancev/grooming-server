@@ -4,8 +4,10 @@ import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import ru.nk.grooming.types.functions.Func2Args;
 import ru.nk.grooming.types.ResponseWithStatus;
 import ru.nk.grooming.types.StatusCode;
+import ru.nk.grooming.types.functions.VoidPropFunc;
 
 import java.util.function.Function;
 
@@ -26,6 +28,13 @@ public class ControllerFunctions {
             Function<PropType, ResponseWithStatus<ObjectType>> findFunction
     ) {
         ResponseWithStatus<ObjectType> response = findFunction.apply(property);
+        return ResponseEntity.status(response.getStatus()).body(response);
+    }
+
+    public <ObjectType> ResponseEntity<ResponseWithStatus<ObjectType>> responseWithStatus(
+            VoidPropFunc<ResponseWithStatus<ObjectType>> findFunction
+    ) {
+        ResponseWithStatus<ObjectType> response = findFunction.apply();
         return ResponseEntity.status(response.getStatus()).body(response);
     }
 

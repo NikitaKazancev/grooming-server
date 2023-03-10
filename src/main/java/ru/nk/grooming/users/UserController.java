@@ -9,6 +9,8 @@ import ru.nk.grooming.general.ControllerFunctions;
 import ru.nk.grooming.types.ResponseWithStatus;
 import ru.nk.grooming.types.StatusCode;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/v1/users")
 @RequiredArgsConstructor
@@ -16,14 +18,12 @@ public class UserController {
     private final UserService userService;
     private final ControllerFunctions functions;
 
-    @PutMapping
-    public ResponseEntity<StatusCode> change(
-            @RequestBody User user,
+    @GetMapping
+    public ResponseEntity<ResponseWithStatus<List<User>>> findAll(
             @NonNull HttpServletRequest request
     ) {
-        return functions.statusCode(user, userService::change, request);
+        return functions.responseWithStatus(request, userService::findAll);
     }
-
     @GetMapping("/{id}")
     public ResponseEntity<ResponseWithStatus<User>> findById(
             @PathVariable Long id,
@@ -31,7 +31,6 @@ public class UserController {
     ) {
         return functions.responseWithStatus(id, userService::findById, request);
     }
-
     @GetMapping(params = "email")
     public ResponseEntity<ResponseWithStatus<User>> findByEmail(
             @RequestParam String email,
@@ -39,19 +38,13 @@ public class UserController {
     ) {
         return functions.responseWithStatus(email, userService::findByEmail, request);
     }
-
-    @GetMapping
-    public ResponseEntity<Iterable<User>> findAll(
+    @PutMapping
+    public ResponseEntity<StatusCode> change(
+            @RequestBody User user,
             @NonNull HttpServletRequest request
     ) {
-        Iterable<User> response = userService.findAll(request);
-        if (response == null) {
-            return ResponseEntity.status(403).body(null);
-        }
-
-        return ResponseEntity.ok(userService.findAll(request));
+        return functions.statusCode(user, userService::change, request);
     }
-
     @DeleteMapping
     public ResponseEntity<StatusCode> deleteById(@NonNull HttpServletRequest request) {
         StatusCode response = userService.deleteById(request);

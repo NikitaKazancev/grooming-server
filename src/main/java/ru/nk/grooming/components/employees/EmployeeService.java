@@ -39,7 +39,6 @@ public class EmployeeService {
                 .position(position)
                 .build();
     }
-
     public boolean fieldsNotExist(EmployeeEntity employee) {
         PositionEntity position = positionRepo.findById(employee.getPositionId()).orElse(null);
         if (position == null) {
@@ -53,6 +52,23 @@ public class EmployeeService {
         return false;
     }
 
+    public ResponseWithStatus<List<EmployeeEntity>> findAll(HttpServletRequest request) {
+        return functions.findAllWithAuth(employeeRepo::findAll, request);
+    }
+    public ResponseWithStatus<List<EmployeeEntity>> findAllByPositionId(Long positionId, HttpServletRequest request) {
+        return functions.findAllByWithAuth(positionId, employeeRepo::findAllByPositionId, request);
+    }
+    public ResponseWithStatus<List<EmployeeEntity>> findAllBySalonId(Long salonId, HttpServletRequest request) {
+        return functions.findAllByWithAuth(salonId, employeeRepo::findAllBySalonId, request);
+    }
+    public ResponseWithStatus<EmployeeFullData> findById(Long id, HttpServletRequest request) {
+        return functions.findByWithJoinWithAuth(
+                id,
+                employeeRepo::findByIdWithJoin,
+                this::employeeFullData,
+                request
+        );
+    }
     public ResponseWithStatus<EmployeeFullData> findByName(
             String name,
             HttpServletRequest request
@@ -64,70 +80,45 @@ public class EmployeeService {
                 request
         );
     }
-
-    public Iterable<EmployeeEntity> findAll(HttpServletRequest request) {
-        return functions.findAllWithAuth(employeeRepo::findAll, request);
-    }
-
-    public Iterable<EmployeeEntity> findAllByPositionId(Long positionId, HttpServletRequest request) {
-        return functions.findAllByWithAuth(positionId, employeeRepo::findAllByPositionId, request);
-    }
-
-    public Iterable<EmployeeEntity> findAllBySalonId(Long salonId, HttpServletRequest request) {
-        return functions.findAllByWithAuth(salonId, employeeRepo::findAllBySalonId, request);
-    }
-
     public StatusCode save(EmployeeEntity employee, HttpServletRequest request) {
-        return save(employee, request, false);
+        return functions.saveWithCheckFieldsWithAuth(
+                employee,
+                this::fieldsNotExist,
+                employee.getName(),
+                employeeRepo::findByName,
+                employeeRepo::save,
+                request
+        );
     }
-
     public StatusCode change(EmployeeEntity employee, HttpServletRequest request) {
-        return save(employee, request, true);
+        return functions.changeWithCheckFieldsWithAuth(
+                employee,
+                this::fieldsNotExist,
+                employeeRepo::findByName,
+                employee.getName(),
+                employeeRepo::save,
+                request
+        );
     }
-
-    public StatusCode save(EmployeeEntity employee, HttpServletRequest request, boolean putReq) {
-        if (authService.isNotAdmin(request)) {
-            return StatusCode.create(403);
-        }
-
-        if (fieldsNotExist(employee)) {
-            return StatusCode.create(404);
-        }
-
-        EmployeeEntity dbEmployee = employeeRepo.findByName(employee.getName()).orElse(null);
-        if (dbEmployee == null) {
-            return StatusCode.create(404);
-        }
-
-        if (putReq) {
-            dbEmployee.merge(employee);
-            employeeRepo.save(dbEmployee);
-        } else {
-            employeeRepo.save(employee);
-        }
-
-        return StatusCode.create(200);
-    }
-
     public StatusCode deleteById(Long id, HttpServletRequest request) {
         return functions.deleteByWithAuth(
                 id,
                 employeeRepo::findById,
-                () -> employeeRepo.deleteById(id),
+                employeeRepo::deleteById,
                 request
         );
     }
-
     public StatusCode deleteAllBySalonId(Long salonId, HttpServletRequest request) {
         return functions.deleteAllByWithAuth(
-                () -> employeeRepo.deleteAllBySalonId(salonId),
+                salonId,
+                employeeRepo::deleteAllBySalonId,
                 request
         );
     }
-
     public StatusCode deleteAllByPositionId(Long positionId, HttpServletRequest request) {
         return functions.deleteAllByWithAuth(
-                () -> employeeRepo.deleteAllByPositionId(positionId),
+                positionId,
+                employeeRepo::deleteAllByPositionId,
                 request
         );
     }

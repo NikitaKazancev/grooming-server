@@ -8,6 +8,8 @@ import ru.nk.grooming.general.ServiceFunctions;
 import ru.nk.grooming.types.ResponseWithStatus;
 import ru.nk.grooming.types.StatusCode;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class UserService {
@@ -15,6 +17,15 @@ public class UserService {
     private final AuthService authService;
     private final ServiceFunctions functions;
 
+    public ResponseWithStatus<User> findById(Long id, HttpServletRequest request) {
+        return functions.findByWithAuth(id, userRepo::findById, request);
+    }
+    public ResponseWithStatus<User> findByEmail(String email, HttpServletRequest request) {
+        return functions.findByWithAuth(email, userRepo::findByEmail, request);
+    }
+    public ResponseWithStatus<List<User>> findAll(HttpServletRequest request) {
+        return functions.findAllWithAuth(userRepo::findAll, request);
+    }
     public StatusCode change(User user, HttpServletRequest request) {
         User dbUser = authService.getUserByHttpRequest(request);
 
@@ -26,7 +37,6 @@ public class UserService {
         userRepo.save(dbUser);
         return StatusCode.create(200);
     }
-
     public StatusCode deleteById(HttpServletRequest request) {
         User dbUser = authService.getUserByHttpRequest(request);
 
@@ -36,17 +46,5 @@ public class UserService {
 
         userRepo.deleteById(dbUser.getId());
         return StatusCode.create(200);
-    }
-
-    public ResponseWithStatus<User> findById(Long id, HttpServletRequest request) {
-        return functions.findByWithAuth(id, userRepo::findById, request);
-    }
-
-    public ResponseWithStatus<User> findByEmail(String email, HttpServletRequest request) {
-        return functions.findByWithAuth(email, userRepo::findByEmail, request);
-    }
-
-    public Iterable<User> findAll(HttpServletRequest request) {
-        return functions.findAllWithAuth(userRepo::findAll, request);
     }
 }

@@ -9,6 +9,8 @@ import ru.nk.grooming.general.ControllerFunctions;
 import ru.nk.grooming.types.ResponseWithStatus;
 import ru.nk.grooming.types.StatusCode;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/v1/positions")
 @RequiredArgsConstructor
@@ -17,12 +19,11 @@ public class PositionController {
     private final ControllerFunctions functions;
 
     @GetMapping
-    public ResponseEntity<Iterable<PositionEntity>> findAll(
+    public ResponseEntity<ResponseWithStatus<List<PositionEntity>>> findAll(
             @NonNull HttpServletRequest request
     ) {
-        return ResponseEntity.ok(positionService.findAll(request));
+        return functions.responseWithStatus(request, positionService::findAll);
     }
-
     @GetMapping("/{id}")
     public ResponseEntity<ResponseWithStatus<PositionEntity>> findById(
             @PathVariable Long id,
@@ -30,7 +31,6 @@ public class PositionController {
     ) {
         return functions.responseWithStatus(id, positionService::findById, request);
     }
-
     @PostMapping
     public ResponseEntity<StatusCode> save(
             @RequestBody PositionEntity position,
@@ -38,12 +38,11 @@ public class PositionController {
     ) {
         return functions.statusCode(position, positionService::save, request);
     }
-
-    @DeleteMapping(params = "name")
+    @DeleteMapping("/{id}")
     public ResponseEntity<StatusCode> deleteById(
-            @RequestParam String name,
+            @PathVariable Long id,
             @NonNull HttpServletRequest request
     ) {
-        return functions.statusCode(name, positionService::deleteByName, request);
+        return functions.statusCode(id, positionService::deleteById, request);
     }
 }

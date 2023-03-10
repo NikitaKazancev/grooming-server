@@ -4,6 +4,9 @@ import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.nk.grooming.authentication.routes.components.AuthService;
+import ru.nk.grooming.types.EntityWithMerge;
+import ru.nk.grooming.types.functions.FindAll;
+import ru.nk.grooming.types.functions.VoidReturnFunc;
 import ru.nk.grooming.types.ResponseWithStatus;
 import ru.nk.grooming.types.StatusCode;
 
@@ -20,6 +23,27 @@ public class ServiceFunctions {
         return authService.isNotAdmin(request);
     }
 
+    public <ObjectType> ResponseWithStatus<List<ObjectType>> findAllWithAuth(
+            FindAll<ObjectType> findAll,
+            HttpServletRequest request
+    ) {
+        if (isNotAdmin(request)) {
+            return ResponseWithStatus.empty(403);
+        }
+
+        return ResponseWithStatus.create(200, findAll.apply());
+    }
+    public <ObjectType, PropType> ResponseWithStatus<List<ObjectType>> findAllByWithAuth(
+            PropType property,
+            Function<PropType, List<ObjectType>> findAllBy,
+            HttpServletRequest request
+    ) {
+        if (isNotAdmin(request)) {
+            return ResponseWithStatus.empty(403);
+        }
+
+        return ResponseWithStatus.create(200, findAllBy.apply(property));
+    }
     public <ObjectType, PropType> ResponseWithStatus<ObjectType> findBy(
             PropType property,
             Function<PropType, Optional<ObjectType>> findFunction
@@ -52,27 +76,6 @@ public class ServiceFunctions {
 
         return findBy(property, findFunction);
     }
-    public <ObjectType> Iterable<ObjectType> findAllWithAuth(
-            FindAll<ObjectType> findAll,
-            HttpServletRequest request
-    ) {
-        if (isNotAdmin(request)) {
-            return null;
-        }
-
-        return findAll.apply();
-    }
-    public <ObjectType, PropType> Iterable<ObjectType> findAllByWithAuth(
-            PropType property,
-            Function<PropType, Iterable<ObjectType>> findAllBy,
-            HttpServletRequest request
-    ) {
-        if (isNotAdmin(request)) {
-            return null;
-        }
-
-        return findAllBy.apply(property);
-    }
 
     public <ObjectType, PropType> ResponseWithStatus<ObjectType> findByWithJoinWithAuth(
             PropType property,
@@ -91,7 +94,6 @@ public class ServiceFunctions {
 
         return ResponseWithStatus.create(200, mapFunction.apply(response));
     }
-
     public <ObjectType, PropType> StatusCode saveWithAuth(
             ObjectType object,
             PropType property,
@@ -110,11 +112,78 @@ public class ServiceFunctions {
 
         return StatusCode.create(409);
     }
+    public <ObjectType, PropType> StatusCode saveWithCheckFieldsWithAuth(
+            ObjectType object,
+            Function<ObjectType, Boolean> fieldsNotExist,
+            PropType property,
+            Function<PropType, Optional<ObjectType>> findFunction,
+            Function<ObjectType, ObjectType> saveFunction,
+            HttpServletRequest request
+    ) {
+        if (isNotAdmin(request)) {
+            return StatusCode.create(403);
+        }
 
+        if (fieldsNotExist.apply(object)) {
+            return StatusCode.create(404);
+        }
+
+        if (findBy(property, findFunction).getStatus() == 404) {
+            saveFunction.apply(object);
+            return StatusCode.create(200);
+        }
+
+        return StatusCode.create(409);
+    }
+    public <ObjectType extends EntityWithMerge<ObjectType>, PropType> StatusCode changeWithAuth(
+            ObjectType object,
+            Function<PropType, Optional<ObjectType>> findFunction,
+            PropType property,
+            VoidReturnFunc<ObjectType> saveFunction,
+            HttpServletRequest request
+    ) {
+        if (isNotAdmin(request)) {
+            return StatusCode.create(403);
+        }
+
+        ObjectType dbObject = findFunction.apply(property).orElse(null);
+        if (dbObject == null) {
+            return StatusCode.create(404);
+        }
+
+        dbObject.merge(object);
+        saveFunction.apply(dbObject);
+        return StatusCode.create(200);
+    }
+    public <ObjectType extends EntityWithMerge<ObjectType>, PropType> StatusCode changeWithCheckFieldsWithAuth(
+            ObjectType object,
+            Function<ObjectType, Boolean> fieldsNotExist,
+            Function<PropType, Optional<ObjectType>> findFunction,
+            PropType property,
+            VoidReturnFunc<ObjectType> saveFunction,
+            HttpServletRequest request
+    ) {
+        if (isNotAdmin(request)) {
+            return StatusCode.create(403);
+        }
+
+        if (fieldsNotExist.apply(object)) {
+            return StatusCode.create(404);
+        }
+
+        ObjectType dbObject = findFunction.apply(property).orElse(null);
+        if (dbObject == null) {
+            return StatusCode.create(404);
+        }
+
+        dbObject.merge(object);
+        saveFunction.apply(dbObject);
+        return StatusCode.create(200);
+    }
     public <ObjectType, PropType> StatusCode deleteByWithAuth(
             PropType property,
             Function<PropType, Optional<ObjectType>> findFunction,
-            Runnable deleteFunction,
+            VoidReturnFunc<PropType> deleteFunction,
             HttpServletRequest request
     ) {
         if (isNotAdmin(request)) {
@@ -125,19 +194,42 @@ public class ServiceFunctions {
             return StatusCode.create(404);
         }
 
-        deleteFunction.run();
+        deleteFunction.apply(property);
         return StatusCode.create(200);
     }
 
-    public StatusCode deleteAllByWithAuth(
-            Runnable deleteFunction,
+    public <PropType> StatusCode deleteAllByWithAuth(
+            PropType property,
+            VoidReturnFunc<PropType> deleteFunction,
             HttpServletRequest request
     ) {
         if (isNotAdmin(request)) {
             return StatusCode.create(403);
         }
 
-        deleteFunction.run();
+        deleteFunction.apply(property);
         return StatusCode.create(200);
+    }
+
+    public <ObjectType, PropType> StatusCode deleteByIdWithJoinWithAuth(
+            PropType property,
+            Function<PropType, Optional<ObjectType>> findFunction,
+            VoidReturnFunc<PropType> deleteFunction,
+            VoidReturnFunc<PropType> deleteFunctionForJoin,
+            HttpServletRequest request
+    ) {
+        StatusCode deleteRes = deleteByWithAuth(
+                property,
+                findFunction,
+                deleteFunction,
+                request
+        );
+
+        if (deleteRes.getStatus() != 200) {
+            return deleteRes;
+        }
+
+        deleteFunctionForJoin.apply(property);
+        return deleteRes;
     }
 }
