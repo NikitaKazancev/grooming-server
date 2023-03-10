@@ -5,6 +5,7 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import ru.nk.grooming.general.ControllerFunctions;
 import ru.nk.grooming.types.ResponseWithStatus;
 import ru.nk.grooming.types.StatusCode;
 
@@ -13,6 +14,7 @@ import ru.nk.grooming.types.StatusCode;
 @RequiredArgsConstructor
 public class PositionController {
     private final PositionService positionService;
+    private final ControllerFunctions functions;
 
     @GetMapping
     public ResponseEntity<Iterable<PositionEntity>> findAll(
@@ -26,8 +28,7 @@ public class PositionController {
             @PathVariable Long id,
             @NonNull HttpServletRequest request
     ) {
-        ResponseWithStatus<PositionEntity> response = positionService.findById(id, request);
-        return ResponseEntity.status(response.getStatus()).body(response);
+        return functions.responseWithStatus(id, positionService::findById, request);
     }
 
     @PostMapping
@@ -35,8 +36,7 @@ public class PositionController {
             @RequestBody PositionEntity position,
             @NonNull HttpServletRequest request
     ) {
-        StatusCode response = positionService.save(position, request);
-        return ResponseEntity.status(response.getStatus()).body(response);
+        return functions.statusCode(position, positionService::save, request);
     }
 
     @DeleteMapping(params = "name")
@@ -44,7 +44,6 @@ public class PositionController {
             @RequestParam String name,
             @NonNull HttpServletRequest request
     ) {
-        StatusCode response = positionService.deleteByName(name, request);
-        return ResponseEntity.status(response.getStatus()).body(response);
+        return functions.statusCode(name, positionService::deleteByName, request);
     }
 }

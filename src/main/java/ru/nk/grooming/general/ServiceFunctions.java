@@ -7,12 +7,13 @@ import ru.nk.grooming.authentication.routes.components.AuthService;
 import ru.nk.grooming.types.ResponseWithStatus;
 import ru.nk.grooming.types.StatusCode;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
 
 @Service
 @RequiredArgsConstructor
-public class RequestFunctions {
+public class ServiceFunctions {
     private final AuthService authService;
 
     private boolean isNotAdmin(HttpServletRequest request) {
@@ -73,7 +74,25 @@ public class RequestFunctions {
         return findAllBy.apply(property);
     }
 
-    public <ObjectType, PropType> StatusCode save(
+    public <ObjectType, PropType> ResponseWithStatus<ObjectType> findByWithJoinWithAuth(
+            PropType property,
+            Function<PropType, List<Object[]>> findFunction,
+            Function<List<Object[]>, ObjectType> mapFunction,
+            HttpServletRequest request
+    ) {
+        if (isNotAdmin(request)) {
+            return ResponseWithStatus.empty(403);
+        }
+
+        List<Object[]> response = findFunction.apply(property);
+        if (response.size() != 1) {
+            return ResponseWithStatus.empty(404);
+        }
+
+        return ResponseWithStatus.create(200, mapFunction.apply(response));
+    }
+
+    public <ObjectType, PropType> StatusCode saveWithAuth(
             ObjectType object,
             PropType property,
             Function<PropType, Optional<ObjectType>> findFunction,
@@ -92,7 +111,7 @@ public class RequestFunctions {
         return StatusCode.create(409);
     }
 
-    public <ObjectType, PropType> StatusCode deleteBy(
+    public <ObjectType, PropType> StatusCode deleteByWithAuth(
             PropType property,
             Function<PropType, Optional<ObjectType>> findFunction,
             Runnable deleteFunction,
@@ -104,6 +123,18 @@ public class RequestFunctions {
 
         if (findFunction.apply(property).orElse(null) == null) {
             return StatusCode.create(404);
+        }
+
+        deleteFunction.run();
+        return StatusCode.create(200);
+    }
+
+    public StatusCode deleteAllByWithAuth(
+            Runnable deleteFunction,
+            HttpServletRequest request
+    ) {
+        if (isNotAdmin(request)) {
+            return StatusCode.create(403);
         }
 
         deleteFunction.run();

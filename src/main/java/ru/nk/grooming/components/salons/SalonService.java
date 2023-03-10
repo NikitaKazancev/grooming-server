@@ -3,7 +3,7 @@ package ru.nk.grooming.components.salons;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import ru.nk.grooming.general.RequestFunctions;
+import ru.nk.grooming.general.ServiceFunctions;
 import ru.nk.grooming.types.ResponseWithStatus;
 import ru.nk.grooming.types.StatusCode;
 
@@ -11,10 +11,10 @@ import ru.nk.grooming.types.StatusCode;
 @RequiredArgsConstructor
 public class SalonService {
     private final SalonRepo salonRepo;
-    private final RequestFunctions requestFunctions;
+    private final ServiceFunctions functions;
 
     public StatusCode save(SalonEntity salonData, HttpServletRequest request) {
-        return requestFunctions.save(
+        return functions.saveWithAuth(
                 salonData,
                 salonData.getAddress(),
                 salonRepo::findByAddress,
@@ -24,7 +24,7 @@ public class SalonService {
     }
 
     public ResponseWithStatus<SalonEntity> findById(Long id) {
-        return requestFunctions.findBy(id, salonRepo::findById);
+        return functions.findBy(id, salonRepo::findById);
     }
 
     public Iterable<SalonEntity> findAll() {

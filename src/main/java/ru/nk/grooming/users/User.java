@@ -35,7 +35,7 @@ public class User implements UserDetails {
     @Enumerated(EnumType.STRING)
     private Role role;
 
-    public void mergeUser(User inputUser) {
+    public void merge(User inputUser) {
         String field = inputUser.getFirstname();
         if (field != null) {
             this.setFirstname(field);

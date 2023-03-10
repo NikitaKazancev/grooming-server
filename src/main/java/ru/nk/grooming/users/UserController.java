@@ -5,6 +5,7 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import ru.nk.grooming.general.ControllerFunctions;
 import ru.nk.grooming.types.ResponseWithStatus;
 import ru.nk.grooming.types.StatusCode;
 
@@ -13,14 +14,14 @@ import ru.nk.grooming.types.StatusCode;
 @RequiredArgsConstructor
 public class UserController {
     private final UserService userService;
+    private final ControllerFunctions functions;
 
     @PutMapping
     public ResponseEntity<StatusCode> change(
             @RequestBody User user,
             @NonNull HttpServletRequest request
     ) {
-        StatusCode response = userService.change(user, request);
-        return ResponseEntity.status(response.getStatus()).body(response);
+        return functions.statusCode(user, userService::change, request);
     }
 
     @GetMapping("/{id}")
@@ -28,8 +29,7 @@ public class UserController {
             @PathVariable Long id,
             @NonNull HttpServletRequest request
     ) {
-        ResponseWithStatus<User> response = userService.findById(id, request);
-        return ResponseEntity.status(response.getStatus()).body(response);
+        return functions.responseWithStatus(id, userService::findById, request);
     }
 
     @GetMapping(params = "email")
@@ -37,8 +37,7 @@ public class UserController {
             @RequestParam String email,
             @NonNull HttpServletRequest request
     ) {
-        ResponseWithStatus<User> response = userService.findByEmail(email, request);
-        return ResponseEntity.status(response.getStatus()).body(response);
+        return functions.responseWithStatus(email, userService::findByEmail, request);
     }
 
     @GetMapping

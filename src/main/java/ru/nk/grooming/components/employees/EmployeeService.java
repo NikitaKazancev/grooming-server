@@ -9,7 +9,7 @@ import ru.nk.grooming.components.positions.PositionEntity;
 import ru.nk.grooming.components.positions.PositionRepo;
 import ru.nk.grooming.components.salons.SalonEntity;
 import ru.nk.grooming.components.salons.SalonRepo;
-import ru.nk.grooming.general.RequestFunctions;
+import ru.nk.grooming.general.ServiceFunctions;
 import ru.nk.grooming.types.ResponseWithStatus;
 import ru.nk.grooming.types.StatusCode;
 
@@ -19,7 +19,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class EmployeeService {
     private final EmployeeRepo employeeRepo;
-    private final RequestFunctions requestFunctions;
+    private final ServiceFunctions functions;
     private final AuthService authService;
     private final PositionRepo positionRepo;
     private final SalonRepo salonRepo;
@@ -40,45 +40,95 @@ public class EmployeeService {
                 .build();
     }
 
+    public boolean fieldsNotExist(EmployeeEntity employee) {
+        PositionEntity position = positionRepo.findById(employee.getPositionId()).orElse(null);
+        if (position == null) {
+            return true;
+        }
+        SalonEntity salon = salonRepo.findById(employee.getSalonId()).orElse(null);
+        if (salon == null) {
+            return true;
+        }
+
+        return false;
+    }
+
     public ResponseWithStatus<EmployeeFullData> findByName(
             String name,
             HttpServletRequest request
     ) {
-        if (authService.isNotAdmin(request)) {
-            return ResponseWithStatus.empty(403);
-        }
-
-        List<Object[]> response = employeeRepo.findByName(name);
-        if (response.size() != 1) {
-            return ResponseWithStatus.empty(404);
-        }
-
-        return ResponseWithStatus.create(200, employeeFullData(response));
+        return functions.findByWithJoinWithAuth(
+                name,
+                employeeRepo::findByNameWithJoin,
+                this::employeeFullData,
+                request
+        );
     }
 
     public Iterable<EmployeeEntity> findAll(HttpServletRequest request) {
-        return requestFunctions.findAllWithAuth(employeeRepo::findAll, request);
+        return functions.findAllWithAuth(employeeRepo::findAll, request);
     }
 
-    public StatusCode save(
-            EmployeeEntity employee,
-            HttpServletRequest request
-    ) {
-        ResponseWithStatus<EmployeeFullData> dbEmployee = findByName(employee.getName(), request);
-        if (dbEmployee.getStatus() == 200) {
-            return StatusCode.create(409);
+    public Iterable<EmployeeEntity> findAllByPositionId(Long positionId, HttpServletRequest request) {
+        return functions.findAllByWithAuth(positionId, employeeRepo::findAllByPositionId, request);
+    }
+
+    public Iterable<EmployeeEntity> findAllBySalonId(Long salonId, HttpServletRequest request) {
+        return functions.findAllByWithAuth(salonId, employeeRepo::findAllBySalonId, request);
+    }
+
+    public StatusCode save(EmployeeEntity employee, HttpServletRequest request) {
+        return save(employee, request, false);
+    }
+
+    public StatusCode change(EmployeeEntity employee, HttpServletRequest request) {
+        return save(employee, request, true);
+    }
+
+    public StatusCode save(EmployeeEntity employee, HttpServletRequest request, boolean putReq) {
+        if (authService.isNotAdmin(request)) {
+            return StatusCode.create(403);
         }
 
-        PositionEntity position = positionRepo.findById(employee.getPositionId()).orElse(null);
-        if (position == null) {
-            return StatusCode.create(404);
-        }
-        SalonEntity salon = salonRepo.findById(employee.getSalonId()).orElse(null);
-        if (salon == null) {
+        if (fieldsNotExist(employee)) {
             return StatusCode.create(404);
         }
 
-        employeeRepo.save(employee);
+        EmployeeEntity dbEmployee = employeeRepo.findByName(employee.getName()).orElse(null);
+        if (dbEmployee == null) {
+            return StatusCode.create(404);
+        }
+
+        if (putReq) {
+            dbEmployee.merge(employee);
+            employeeRepo.save(dbEmployee);
+        } else {
+            employeeRepo.save(employee);
+        }
+
         return StatusCode.create(200);
+    }
+
+    public StatusCode deleteById(Long id, HttpServletRequest request) {
+        return functions.deleteByWithAuth(
+                id,
+                employeeRepo::findById,
+                () -> employeeRepo.deleteById(id),
+                request
+        );
+    }
+
+    public StatusCode deleteAllBySalonId(Long salonId, HttpServletRequest request) {
+        return functions.deleteAllByWithAuth(
+                () -> employeeRepo.deleteAllBySalonId(salonId),
+                request
+        );
+    }
+
+    public StatusCode deleteAllByPositionId(Long positionId, HttpServletRequest request) {
+        return functions.deleteAllByWithAuth(
+                () -> employeeRepo.deleteAllByPositionId(positionId),
+                request
+        );
     }
 }

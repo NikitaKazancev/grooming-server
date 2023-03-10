@@ -5,6 +5,7 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import ru.nk.grooming.general.ControllerFunctions;
 import ru.nk.grooming.types.ResponseWithStatus;
 import ru.nk.grooming.types.StatusCode;
 
@@ -13,21 +14,21 @@ import ru.nk.grooming.types.StatusCode;
 @RequiredArgsConstructor
 public class SalonController {
     private final SalonService salonService;
+    private final ControllerFunctions functions;
+
     @PostMapping
     public ResponseEntity<StatusCode> save(
             @RequestBody SalonEntity salonData,
             @NonNull HttpServletRequest request
     ) {
-        StatusCode statusCode = salonService.save(salonData, request);
-        return ResponseEntity.status(statusCode.getStatus()).body(statusCode);
+        return functions.statusCode(salonData, salonService::save, request);
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<ResponseWithStatus<SalonEntity>> findById(
             @PathVariable Long id
     ) {
-        ResponseWithStatus<SalonEntity> response = salonService.findById(id);
-        return ResponseEntity.status(response.getStatus()).body(response);
+        return functions.responseWithStatus(id, salonService::findById);
     }
 
     @GetMapping

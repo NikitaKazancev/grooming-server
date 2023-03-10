@@ -6,6 +6,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface EmployeeRepo extends JpaRepository<EmployeeEntity, Long> {
@@ -16,5 +17,10 @@ public interface EmployeeRepo extends JpaRepository<EmployeeEntity, Long> {
             "JOIN PositionEntity p on e.positionId = p.id " +
             "where e.name = :name" +
     "")
-    List<Object[]> findByName(@Param("name") String name);
+    List<Object[]> findByNameWithJoin(@Param("name") String name);
+    Iterable<EmployeeEntity> findAllBySalonId(Long salonId);
+    Iterable<EmployeeEntity> findAllByPositionId(Long positionId);
+    Optional<EmployeeEntity> findByName(String name);
+    Void deleteAllBySalonId(Long salonId);
+    Void deleteAllByPositionId(Long positionId);
 }

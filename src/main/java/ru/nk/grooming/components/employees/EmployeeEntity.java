@@ -6,6 +6,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.Date;
+
 @Entity
 @Table(name = "employees")
 @Data
@@ -23,4 +25,26 @@ public class EmployeeEntity {
     private Long positionId;
     @Column(name = "salon_id")
     private Long salonId;
+
+    public void merge(EmployeeEntity inputEmployee) {
+        String field = inputEmployee.getPhone();
+        if (field != null) {
+            this.setPhone(field);
+        }
+
+        field = inputEmployee.getAddress();
+        if (field != null) {
+            this.setAddress(field);
+        }
+
+        Long id = inputEmployee.getPositionId();
+        if (id != null) {
+            this.setPositionId(id);
+        }
+
+        id = inputEmployee.getSalonId();
+        if (id != null) {
+            this.setSalonId(id);
+        }
+    }
 }

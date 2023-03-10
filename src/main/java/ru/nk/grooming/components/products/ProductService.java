@@ -3,7 +3,7 @@ package ru.nk.grooming.components.products;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import ru.nk.grooming.general.RequestFunctions;
+import ru.nk.grooming.general.ServiceFunctions;
 import ru.nk.grooming.types.ResponseWithStatus;
 import ru.nk.grooming.types.StatusCode;
 
@@ -11,10 +11,10 @@ import ru.nk.grooming.types.StatusCode;
 @RequiredArgsConstructor
 public class ProductService {
     private final ProductRepo productRepo;
-    private final RequestFunctions requestFunctions;
+    private final ServiceFunctions functions;
 
     public StatusCode save(ProductEntity product, HttpServletRequest request) {
-        return requestFunctions.save(
+        return functions.saveWithAuth(
                 product,
                 product.getName(),
                 productRepo::findByName,
@@ -24,7 +24,7 @@ public class ProductService {
     }
 
     public ResponseWithStatus<ProductEntity> findById(Long id) {
-        return requestFunctions.findBy(id, productRepo::findById);
+        return functions.findBy(id, productRepo::findById);
     }
 
     public Iterable<ProductEntity> findAll() {
