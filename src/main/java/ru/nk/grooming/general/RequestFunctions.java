@@ -15,6 +15,10 @@ import java.util.function.Function;
 public class RequestFunctions {
     private final AuthService authService;
 
+    private boolean isNotAdmin(HttpServletRequest request) {
+        return authService.isNotAdmin(request);
+    }
+
     public <ObjectType, PropType> ResponseWithStatus<ObjectType> findBy(
             PropType property,
             Function<PropType, Optional<ObjectType>> findFunction
@@ -38,7 +42,7 @@ public class RequestFunctions {
             Function<PropType, Optional<ObjectType>> findFunction,
             HttpServletRequest request
     ) {
-        if (authService.isNotAdmin(request)) {
+        if (isNotAdmin(request)) {
             return ResponseWithStatus.<ObjectType>builder()
                     .status(403)
                     .data(null)
@@ -51,7 +55,7 @@ public class RequestFunctions {
             FindAll<ObjectType> findAll,
             HttpServletRequest request
     ) {
-        if (authService.isNotAdmin(request)) {
+        if (isNotAdmin(request)) {
             return null;
         }
 
@@ -62,7 +66,7 @@ public class RequestFunctions {
             Function<PropType, Iterable<ObjectType>> findAllBy,
             HttpServletRequest request
     ) {
-        if (authService.isNotAdmin(request)) {
+        if (isNotAdmin(request)) {
             return null;
         }
 
@@ -76,7 +80,7 @@ public class RequestFunctions {
             Function<ObjectType, ObjectType> saveFunction,
             HttpServletRequest request
     ) {
-        if (authService.isNotAdmin(request)) {
+        if (isNotAdmin(request)) {
             return StatusCode.create(403);
         }
 
@@ -86,5 +90,23 @@ public class RequestFunctions {
         }
 
         return StatusCode.create(409);
+    }
+
+    public <ObjectType, PropType> StatusCode deleteBy(
+            PropType property,
+            Function<PropType, Optional<ObjectType>> findFunction,
+            Runnable deleteFunction,
+            HttpServletRequest request
+    ) {
+        if (isNotAdmin(request)) {
+            return StatusCode.create(403);
+        }
+
+        if (findFunction.apply(property).orElse(null) == null) {
+            return StatusCode.create(404);
+        }
+
+        deleteFunction.run();
+        return StatusCode.create(200);
     }
 }

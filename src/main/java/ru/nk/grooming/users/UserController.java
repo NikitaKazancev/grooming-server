@@ -42,7 +42,7 @@ public class UserController {
     }
 
     @GetMapping
-    public ResponseEntity<Iterable<User>> findByEmail(
+    public ResponseEntity<Iterable<User>> findAll(
             @NonNull HttpServletRequest request
     ) {
         Iterable<User> response = userService.findAll(request);
@@ -51,5 +51,11 @@ public class UserController {
         }
 
         return ResponseEntity.ok(userService.findAll(request));
+    }
+
+    @DeleteMapping
+    public ResponseEntity<StatusCode> deleteById(@NonNull HttpServletRequest request) {
+        StatusCode response = userService.deleteById(request);
+        return ResponseEntity.status(response.getStatus()).body(response);
     }
 }

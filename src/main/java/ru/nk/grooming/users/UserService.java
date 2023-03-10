@@ -27,6 +27,17 @@ public class UserService {
         return StatusCode.create(200);
     }
 
+    public StatusCode deleteById(HttpServletRequest request) {
+        User dbUser = authService.getUserByHttpRequest(request);
+
+        if (dbUser == null) {
+            return StatusCode.create(403);
+        }
+
+        userRepo.deleteById(dbUser.getId());
+        return StatusCode.create(200);
+    }
+
     public ResponseWithStatus<User> findById(Long id, HttpServletRequest request) {
         return requestFunctions.findByWithAuth(id, userRepo::findById, request);
     }

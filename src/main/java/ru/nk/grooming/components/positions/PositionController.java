@@ -38,4 +38,13 @@ public class PositionController {
         StatusCode response = positionService.save(position, request);
         return ResponseEntity.status(response.getStatus()).body(response);
     }
+
+    @DeleteMapping(params = "name")
+    public ResponseEntity<StatusCode> deleteById(
+            @RequestParam String name,
+            @NonNull HttpServletRequest request
+    ) {
+        StatusCode response = positionService.deleteByName(name, request);
+        return ResponseEntity.status(response.getStatus()).body(response);
+    }
 }

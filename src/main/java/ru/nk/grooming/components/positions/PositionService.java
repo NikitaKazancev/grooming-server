@@ -36,4 +36,13 @@ public class PositionService {
                 request
         );
     }
+
+    public StatusCode deleteByName(String name, HttpServletRequest request) {
+        return requestFunctions.deleteBy(
+                name,
+                positionRepo::findByName,
+                () -> positionRepo.deleteByName(name),
+                request
+        );
+    }
 }
