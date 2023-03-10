@@ -7,8 +7,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import ru.nk.grooming.types.EntityWithMerge;
 
-import java.util.Date;
-
 @Entity
 @Table(name = "employees")
 @Data

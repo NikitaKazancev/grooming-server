@@ -3,7 +3,7 @@ package ru.nk.grooming.components.products;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import ru.nk.grooming.general.ServiceFunctions;
+import ru.nk.grooming.general.requests.ServiceFunctions;
 import ru.nk.grooming.types.ResponseWithStatus;
 import ru.nk.grooming.types.StatusCode;
 
