@@ -1,0 +1,33 @@
+version: '3'
+
+services:
+   mysql:
+      image: mysql:latest
+      environment:
+         MYSQL_ROOT_PASSWORD: password
+         MYSQL_DATABASE: grooming-database
+      volumes:
+         - mysql-data:/var/lib/mysql
+      networks:
+         - grooming-network
+
+   server:
+      build: .
+      restart: always
+      ports:
+         - '8080:8080'
+      environment:
+         SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/grooming-database
+         SPRING_DATASOURCE_USERNAME: root
+         SPRING_DATASOURCE_PASSWORD: password
+         SERVER_PORT: 8080
+      depends_on:
+         - mysql
+      networks:
+         - grooming-network
+
+networks:
+   grooming-network:
+
+volumes:
+   mysql-data:

@@ -4,6 +4,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.nk.grooming.authentication.routes.components.AuthService;
+import ru.nk.grooming.components.employees.EmployeeEntity;
 import ru.nk.grooming.components.employees.EmployeeRepo;
 import ru.nk.grooming.components.salons.SalonEntity;
 import ru.nk.grooming.components.salons.SalonRepo;
@@ -29,9 +30,13 @@ public class SalaryService {
     private final EmployeeRepo employeeRepo;
 
     public boolean fieldsNotExist(SalaryEntity salary) {
-        SalonEntity salon = salonRepo.findById(salary.getSalonId()).orElse(null);
-        if (salon == null) {
+        if (!salonRepo.existsById(salary.getSalonId())) {
             return true;
+        }
+        for (SalaryEmployee employee : salary.getEmployees()) {
+            if (!employeeRepo.existsById(employee.getEmployeeId())) {
+                return true;
+            }
         }
 
         return false;

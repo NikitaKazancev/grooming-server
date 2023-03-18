@@ -38,12 +38,10 @@ public class EmployeeService {
                 .build();
     }
     public boolean fieldsNotExist(EmployeeEntity employee) {
-        PositionEntity position = positionRepo.findById(employee.getPositionId()).orElse(null);
-        if (position == null) {
+        if (!positionRepo.existsById(employee.getPositionId())) {
             return true;
         }
-        SalonEntity salon = salonRepo.findById(employee.getSalonId()).orElse(null);
-        if (salon == null) {
+        if (!salonRepo.existsById(employee.getSalonId())) {
             return true;
         }
 
