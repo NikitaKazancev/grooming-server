@@ -41,7 +41,7 @@ public class RegistrationController {
     }
     @PostMapping
     public ResponseEntity<StatusCode> save(
-            @RequestBody RegistrationEntity registration,
+            @RequestBody ru.nk.grooming.documents.registratons.RegistrationRequest registration,
             @NonNull HttpServletRequest request
     ) {
         return functions.statusCode(registration, registrationService::save, request);

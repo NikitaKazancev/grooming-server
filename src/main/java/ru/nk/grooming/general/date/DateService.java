@@ -1,5 +1,6 @@
 package ru.nk.grooming.general.date;
 
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -13,5 +14,16 @@ public class DateService {
         calendar.set(Calendar.SECOND, 0);
         calendar.set(Calendar.MILLISECOND, 0);
         return calendar.getTime();
+    }
+
+    public static Date date(String date) {
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+
+        try {
+            return dateFormat.parse(date);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new Date();
+        }
     }
 }
