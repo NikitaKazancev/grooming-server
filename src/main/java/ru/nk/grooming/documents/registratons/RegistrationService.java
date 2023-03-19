@@ -66,10 +66,6 @@ public class RegistrationService {
         if (product == null) {
             return true;
         }
-        User user = userRepo.findById(registration.getUserId()).orElse(null);
-        if (user == null) {
-            return true;
-        }
 
         return false;
     }
@@ -93,15 +89,24 @@ public class RegistrationService {
                 request
         );
     }
-    public StatusCode save(RegistrationEntity registration, HttpServletRequest request) {
+    public StatusCode save(
+            ru.nk.grooming.documents.registratons.RegistrationRequest registration,
+            HttpServletRequest request
+    ) {
         registration.setDate(new Date());
 
-        return functions.saveWithCheckFieldsWithAuth(
-                registration,
-                this::fieldsNotExist,
-                registrationRepo::save,
-                request
-        );
+        User user = authService.getUserByHttpRequest(request);
+        if (user != null) {
+            RegistrationEntity registrationEntity = registration.registrationEntity(user.getId());
+
+            return functions.saveWithCheckFields(
+                    registrationEntity,
+                    this::fieldsNotExist,
+                    registrationRepo::save
+            );
+        }
+
+        return StatusCode.create(403);
     }
     public StatusCode deleteById(Long id, HttpServletRequest request) {
         return functions.deleteByWithAuth(

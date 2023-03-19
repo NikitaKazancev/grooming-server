@@ -12,7 +12,9 @@ import java.util.Optional;
 @Repository
 public interface SalaryRepo extends JpaRepository<SalaryEntity, Long> {
     Optional<SalaryEntity> findByMonthAndSalonId(Date month, Long salonId);
-
+    List<SalaryEntity> findAllByMonth(Date month);
+    List<SalaryEntity> findAllBySalonId(Long id);
+    List<SalaryEntity> findAllByMonthAndSalonId(Date month, Long id);
     @Query("select s, e from SalaryEntity s " +
             "join fetch s.employees se " +
             "join fetch EmployeeEntity e on se.employeeId = e.id " +

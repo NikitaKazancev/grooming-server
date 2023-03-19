@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import ru.nk.grooming.types.functions.Func2Args;
 import ru.nk.grooming.types.ResponseWithStatus;
 import ru.nk.grooming.types.StatusCode;
+import ru.nk.grooming.types.functions.Func3Args;
 import ru.nk.grooming.types.functions.VoidPropFunc;
 
 import java.util.function.Function;
@@ -16,6 +17,14 @@ import java.util.function.Function;
 public class ControllerFunctions {
     public <ObjectType, PropType> ResponseEntity<ResponseWithStatus<ObjectType>> responseWithStatus(
             PropType property,
+            Function<PropType, ResponseWithStatus<ObjectType>> findFunction
+    ) {
+        ResponseWithStatus<ObjectType> response = findFunction.apply(property);
+        return ResponseEntity.status(response.getStatus()).body(response);
+    }
+
+    public <ObjectType, PropType> ResponseEntity<ResponseWithStatus<ObjectType>> responseWithStatus(
+            PropType property,
             Func2Args<PropType, HttpServletRequest, ResponseWithStatus<ObjectType>> findFunction,
             HttpServletRequest request
     ) {
@@ -23,11 +32,13 @@ public class ControllerFunctions {
         return ResponseEntity.status(response.getStatus()).body(response);
     }
 
-    public <ObjectType, PropType> ResponseEntity<ResponseWithStatus<ObjectType>> responseWithStatus(
-            PropType property,
-            Function<PropType, ResponseWithStatus<ObjectType>> findFunction
+    public <ObjectType, PropType1, PropType2> ResponseEntity<ResponseWithStatus<ObjectType>> responseWithStatus(
+            PropType1 property1,
+            PropType2 property2,
+            Func3Args<PropType1, PropType2, HttpServletRequest, ResponseWithStatus<ObjectType>> findFunction,
+            HttpServletRequest request
     ) {
-        ResponseWithStatus<ObjectType> response = findFunction.apply(property);
+        ResponseWithStatus<ObjectType> response = findFunction.apply(property1, property2, request);
         return ResponseEntity.status(response.getStatus()).body(response);
     }
 
