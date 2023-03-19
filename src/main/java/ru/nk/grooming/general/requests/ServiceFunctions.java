@@ -113,6 +113,23 @@ public class ServiceFunctions {
 
         return StatusCode.create(409);
     }
+    public <ObjectType> StatusCode saveWithCheckFieldsWithAuth(
+            ObjectType object,
+            Function<ObjectType, Boolean> fieldsNotExist,
+            Function<ObjectType, ObjectType> saveFunction,
+            HttpServletRequest request
+    ) {
+        if (isNotAdmin(request)) {
+            return StatusCode.create(403);
+        }
+
+        if (fieldsNotExist.apply(object)) {
+            return StatusCode.create(404);
+        }
+
+        saveFunction.apply(object);
+        return StatusCode.create(200);
+    }
     public <ObjectType, PropType> StatusCode saveWithCheckFieldsWithAuth(
             ObjectType object,
             Function<ObjectType, Boolean> fieldsNotExist,

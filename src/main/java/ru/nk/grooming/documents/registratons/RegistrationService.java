@@ -3,6 +3,7 @@ package ru.nk.grooming.documents.registratons;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import ru.nk.grooming.authentication.routes.components.AuthService;
 import ru.nk.grooming.components.employees.EmployeeEntity;
 import ru.nk.grooming.components.employees.EmployeeRepo;
 import ru.nk.grooming.components.products.ProductEntity;
@@ -24,11 +25,13 @@ import java.util.List;
 @RequiredArgsConstructor
 public class RegistrationService {
     private final ServiceFunctions functions;
+    private final AuthService authService;
     private final RegistrationRepo registrationRepo;
     private final SalonRepo salonRepo;
     private final EmployeeRepo employeeRepo;
     private final ProductRepo productRepo;
     private final UserRepo userRepo;
+
 
     private RegistrationFullData fullData(List<Object[]> entitiesArr) {
         Object[] entities = entitiesArr.get(0);
@@ -96,8 +99,6 @@ public class RegistrationService {
         return functions.saveWithCheckFieldsWithAuth(
                 registration,
                 this::fieldsNotExist,
-                registration.getId(),
-                registrationRepo::findById,
                 registrationRepo::save,
                 request
         );
