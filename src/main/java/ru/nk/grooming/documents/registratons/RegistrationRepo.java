@@ -17,6 +17,13 @@ public interface RegistrationRepo extends JpaRepository<RegistrationEntity, Long
             "join User u on r.userId = u.id " +
             "where r.id = :id")
     List<Object[]> findByIdWithJoin(@Param("id") Long id);
+    @Query("select r, s, e, p " +
+            "from RegistrationEntity r " +
+            "join SalonEntity s on r.salonId = s.id " +
+            "join EmployeeEntity e on r.employeeId = e.id " +
+            "join ProductEntity p on r.productId = p.id " +
+            "where r.userId = :id")
+    List<Object[]> findAllByUserIdWithJoinWithoutUser(@Param("id") Long id);
     @Query("select r, s, e, p, u " +
             "from RegistrationEntity r " +
             "join SalonEntity s on r.salonId = s.id " +
