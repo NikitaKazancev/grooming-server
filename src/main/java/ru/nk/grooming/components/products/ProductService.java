@@ -39,4 +39,12 @@ public class ProductService {
                 request
         );
     }
+    public StatusCode deleteById(Long id, HttpServletRequest request) {
+        return functions.deleteByWithAuth(
+                id,
+                productRepo::findById,
+                productRepo::deleteById,
+                request
+        );
+    }
 }

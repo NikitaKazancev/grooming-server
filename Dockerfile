@@ -7,6 +7,6 @@ COPY . .
 
 RUN mvn clean package -DskipTests
 
-EXPOSE 8080
+EXPOSE 9090
 
 CMD ["java", "-jar", "/app/target/grooming-0.1.0.jar"]

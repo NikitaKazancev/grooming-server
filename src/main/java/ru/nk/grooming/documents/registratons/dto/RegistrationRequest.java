@@ -1,10 +1,10 @@
-package ru.nk.grooming.documents.registratons;
+package ru.nk.grooming.documents.registratons.dto;
 
-import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import ru.nk.grooming.documents.registratons.RegistrationEntity;
 
 import java.util.Date;
 
@@ -21,7 +21,7 @@ public class RegistrationRequest {
     private Long productId;
     private String comment;
 
-    RegistrationEntity registrationEntity(Long userId) {
+    public RegistrationEntity registrationEntity(Long userId) {
         return RegistrationEntity.builder()
                 .date(this.date)
                 .duration(this.duration)

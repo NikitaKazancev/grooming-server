@@ -1,6 +1,7 @@
 package ru.nk.grooming.components.products;
 
 import jakarta.servlet.http.HttpServletRequest;
+import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -38,5 +39,12 @@ public class ProductController {
             HttpServletRequest request
     ) {
         return functions.statusCode(product, productService::change, request);
+    }
+    @DeleteMapping("/{id}")
+    public ResponseEntity<StatusCode> deleteById(
+            @PathVariable Long id,
+            @NonNull HttpServletRequest request
+    ) {
+        return functions.statusCode(id, productService::deleteById, request);
     }
 }

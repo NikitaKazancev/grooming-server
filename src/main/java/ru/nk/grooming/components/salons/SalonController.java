@@ -22,17 +22,17 @@ public class SalonController {
     public ResponseEntity<List<SalonEntity>> findAll() {
         return ResponseEntity.ok(salonService.findAll());
     }
-    @GetMapping(params = "phone")
-    public ResponseEntity<List<SalonEntity>> findAllByPhone(
-            @RequestParam String phone
-    ) {
-        return ResponseEntity.ok(salonService.findAllByPhone(phone));
-    }
     @GetMapping("/{id}")
     public ResponseEntity<ResponseWithStatus<SalonEntity>> findById(
             @PathVariable Long id
     ) {
         return functions.responseWithStatus(id, salonService::findById);
+    }
+    @GetMapping(params = "phone")
+    public ResponseEntity<List<SalonEntity>> findAllByPhone(
+            @RequestParam String phone
+    ) {
+        return ResponseEntity.ok(salonService.findAllByPhone(phone));
     }
     @PutMapping
     public ResponseEntity<StatusCode> change(

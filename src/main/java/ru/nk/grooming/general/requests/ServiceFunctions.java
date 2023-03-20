@@ -4,13 +4,12 @@ import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.nk.grooming.authentication.routes.components.AuthService;
-import ru.nk.grooming.documents.salary.SalaryEntity;
 import ru.nk.grooming.types.EntityWithMerge;
+import ru.nk.grooming.types.ResponseWithStatus;
+import ru.nk.grooming.types.StatusCode;
 import ru.nk.grooming.types.functions.FindAll;
 import ru.nk.grooming.types.functions.Func2Args;
 import ru.nk.grooming.types.functions.VoidReturnFunc;
-import ru.nk.grooming.types.ResponseWithStatus;
-import ru.nk.grooming.types.StatusCode;
 
 import java.util.List;
 import java.util.Optional;

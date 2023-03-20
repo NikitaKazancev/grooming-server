@@ -23,20 +23,6 @@ public class EmployeeController {
     public ResponseEntity<ResponseWithStatus<List<EmployeeEntity>>> findAll(@NonNull HttpServletRequest request) {
         return functions.responseWithStatus(request, employeeService::findAll);
     }
-    @GetMapping(params = "positionId")
-    public ResponseEntity<ResponseWithStatus<List<EmployeeEntity>>> findAllByPositionId(
-            @RequestParam Long positionId,
-            @NonNull HttpServletRequest request
-    ) {
-        return functions.responseWithStatus(positionId, employeeService::findAllByPositionId, request);
-    }
-    @GetMapping(params = "salonId")
-    public ResponseEntity<ResponseWithStatus<List<EmployeeEntity>>> findAllBySalonId(
-            @RequestParam Long salonId,
-            @NonNull HttpServletRequest request
-    ) {
-        return functions.responseWithStatus(salonId, employeeService::findAllBySalonId, request);
-    }
     @GetMapping("/{id}")
     public ResponseEntity<ResponseWithStatus<EmployeeFullData>> findById(
             @PathVariable Long id,
@@ -50,6 +36,20 @@ public class EmployeeController {
             @NonNull HttpServletRequest request
     ) {
         return functions.responseWithStatus(name, employeeService::findByName, request);
+    }
+    @GetMapping(params = "positionId")
+    public ResponseEntity<ResponseWithStatus<List<EmployeeEntity>>> findAllByPositionId(
+            @RequestParam Long positionId,
+            @NonNull HttpServletRequest request
+    ) {
+        return functions.responseWithStatus(positionId, employeeService::findAllByPositionId, request);
+    }
+    @GetMapping(params = "salonId")
+    public ResponseEntity<ResponseWithStatus<List<EmployeeEntity>>> findAllBySalonId(
+            @RequestParam Long salonId,
+            @NonNull HttpServletRequest request
+    ) {
+        return functions.responseWithStatus(salonId, employeeService::findAllBySalonId, request);
     }
     @PostMapping
     public ResponseEntity<StatusCode> save(

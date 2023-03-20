@@ -11,11 +11,11 @@ import ru.nk.grooming.components.products.ProductRepo;
 import ru.nk.grooming.components.salons.SalonEntity;
 import ru.nk.grooming.components.salons.SalonRepo;
 import ru.nk.grooming.documents.registratons.dto.RegistrationFullData;
+import ru.nk.grooming.documents.registratons.dto.RegistrationRequest;
 import ru.nk.grooming.general.requests.ServiceFunctions;
 import ru.nk.grooming.types.ResponseWithStatus;
 import ru.nk.grooming.types.StatusCode;
 import ru.nk.grooming.users.User;
-import ru.nk.grooming.users.UserRepo;
 import ru.nk.grooming.users.dto.UserDTO;
 
 import java.util.Date;
@@ -30,7 +30,6 @@ public class RegistrationService {
     private final SalonRepo salonRepo;
     private final EmployeeRepo employeeRepo;
     private final ProductRepo productRepo;
-    private final UserRepo userRepo;
 
 
     private RegistrationFullData fullData(List<Object[]> entitiesArr) {
@@ -90,7 +89,7 @@ public class RegistrationService {
         );
     }
     public StatusCode save(
-            ru.nk.grooming.documents.registratons.RegistrationRequest registration,
+            RegistrationRequest registration,
             HttpServletRequest request
     ) {
         registration.setDate(new Date());
