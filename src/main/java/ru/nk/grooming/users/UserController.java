@@ -39,6 +39,13 @@ public class UserController {
     ) {
         return functions.responseWithStatus(email, userService::findByEmail, request);
     }
+    @PostMapping
+    public ResponseEntity<StatusCode> save(
+            @RequestBody User user,
+            @NonNull HttpServletRequest request
+    ) {
+        return functions.statusCode(user, userService::save, request);
+    }
     @PutMapping
     public ResponseEntity<StatusCode> change(
             @RequestBody User user,

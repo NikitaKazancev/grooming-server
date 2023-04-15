@@ -2,6 +2,7 @@ package ru.nk.grooming.users;
 
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import ru.nk.grooming.authentication.routes.components.AuthService;
 import ru.nk.grooming.components.employees.EmployeeEntity;
@@ -24,6 +25,7 @@ public class UserService {
     private final AuthService authService;
     private final ServiceFunctions functions;
     private final RegistrationRepo registrationRepo;
+    private final PasswordEncoder passwordEncoder;
 
     private RegistrationFullData getRegistrations(Object[] entities) {
         RegistrationEntity registration = (RegistrationEntity) entities[0];
@@ -81,6 +83,20 @@ public class UserService {
         return ResponseWithStatus.create(
                 response.getStatus(),
                 response.getData().stream().map(UserDTO::create).toList()
+        );
+    }
+    public StatusCode save(User user, HttpServletRequest request) {
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
+        if (user.getRole() == null) {
+            user.setRole(Role.USER);
+        }
+
+        return functions.saveWithAuth(
+                user,
+                user.getEmail(),
+                userRepo::findByEmail,
+                userRepo::save,
+                request
         );
     }
     public StatusCode change(User user, HttpServletRequest request) {

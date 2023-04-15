@@ -22,13 +22,4 @@ public class AdminController {
         StatusCode statusCode = adminService.home(request);
         return ResponseEntity.status(statusCode.getStatus()).body(statusCode);
     }
-
-    @PostMapping("/users")
-    public ResponseEntity<AuthResponseDTO> saveUser(
-            @RequestBody User user,
-            @NonNull HttpServletRequest request
-    ) {
-        AuthResponseDTO response = adminService.saveUser(user, request);
-        return ResponseEntity.status(response.getStatus()).body(response);
-    }
 }

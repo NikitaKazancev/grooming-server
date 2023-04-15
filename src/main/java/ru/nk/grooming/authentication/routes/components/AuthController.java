@@ -24,10 +24,10 @@ public class AuthController {
         return ResponseEntity.status(response.getStatus()).body(response);
     }
 
-    @PostMapping("/authenticate")
-    public ResponseEntity<AuthResponseDTO> authenticate(
+    @PostMapping("/login")
+    public ResponseEntity<AuthResponseDTO> login(
             @RequestBody AuthRequestDTO authData
     ) {
-        return ResponseEntity.ok(authService.authenticate(authData));
+        return ResponseEntity.ok(authService.login(authData));
     }
 }
