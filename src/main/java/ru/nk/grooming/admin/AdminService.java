@@ -20,20 +20,4 @@ public class AdminService {
 
         return StatusCode.create(200);
     }
-
-    public AuthResponseDTO saveUser(User user, HttpServletRequest request) {
-        if (authService.isNotAdmin(request)) {
-            return AuthResponseDTO.builder()
-                    .jwt(null)
-                    .status(403)
-                    .build();
-        }
-
-        return authService.register(
-                RegisterRequestDTO.builder()
-                .password(user.getPassword())
-                .email(user.getEmail())
-                .build(), user.getRole()
-        );
-    }
 }

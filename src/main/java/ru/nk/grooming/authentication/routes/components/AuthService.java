@@ -66,7 +66,7 @@ public class AuthService {
                 .build();
     }
 
-    public AuthResponseDTO authenticate(AuthRequestDTO authData) {
+    public AuthResponseDTO login(AuthRequestDTO authData) {
         authManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                         authData.getEmail(),
